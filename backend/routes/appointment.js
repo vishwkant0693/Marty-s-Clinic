@@ -40,4 +40,59 @@ router.post('/add-appointment', fetchuser, [
     }
 })
 
+
+
+router.put('/update-appointment/:id', fetchuser, async (req, res) => {
+    try {
+        const { name, age, sex, symptoms } = req.body;
+
+        const newAppoint = {};
+        if (name) {newAppoint.name = name};
+        if (age) {newAppoint.age = age};
+        if (sex) {newAppoint.sex = sex};
+        if (doctor) {newAppoint.doctor = doctor};
+        if (symptoms) {newAppoint.symptoms = symptoms};
+
+
+        // finding appointment
+        let appoint = await Appointments.findById(req.params.id);
+        if (!appoint) { res.status(404).send("Not Found !!") }
+
+        // appointment belongs to user
+        if(appoint.user.toString() !== req.user.id) {
+            return res.status(401).send("Not Allowed !!")
+        }
+        appoint = await Appointments.findByIdAndUpdate(req.params.id, {$set: newAppoint}, {new: true})
+        res.json({appoint});
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Update-Appointment Error Occured");
+    }
+})
+
+
+router.delete('/delete-appointment/:id', fetchuser, async (req, res) => {
+    try {
+        const { name, age, sex, symptoms } = req.body;
+        
+        let appoint = await Appointments.findById(req.params.id);
+        if (!appoint) { res.status(404).send("Not Found !!") }
+
+        if(appoint.user.toString() !== req.user.id) {
+            return res.status(401).send("Not Allowed !!")
+        }
+
+        appoint = await Appointments.findByIdAndDelete(req.params.id)
+        res.json({"Deleted":"Appointment has been deleted",appoint:appoint});
+
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Delete-Appointment Error Occured");
+    }
+})
+
+
+
 module.exports = router
