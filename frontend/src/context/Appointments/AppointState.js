@@ -36,7 +36,6 @@ const AppointState = (props) => {
         const appointment = await response.json();
 
         setAppoint(appoint.concat(appointment));
-
     };
 
 

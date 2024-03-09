@@ -15,8 +15,7 @@ const appointmentSchema = new Schema({
         required: true
     },
     sex: {
-        type: String,
-        required: true
+        type: String
     },
     doctor: {
         type: String,
